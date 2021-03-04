@@ -19,7 +19,7 @@ MAX_MESSAGES = 5
 
 def on_connect(client, userdata, flags, rc):
     client.subscribe(topic, qos=2)
-    LOG.info('MQTT: Process is connected and it is ready to subscribe.')
+    LOG.info('MQTT: Process is connected and it is ready to subscribe. pp')
 
 def on_message(client, userdata, message):
     LOG.info('MQTT: ' + str(message.payload.decode("utf-8")))
