@@ -27,3 +27,5 @@ RUN yum -y install python3-pip
 RUN pip3 install paho-mqtt
 RUN pip3 install pika==1.0.0
 RUN wget https://raw.githubusercontent.com/leonardouniromasalvucci/docker_images/master/griddb/griddbc.py
+
+ENV PYTHONPATH /usr/src/app
