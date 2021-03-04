@@ -23,29 +23,29 @@ def on_connect(client, userdata, flags, rc):
 
 def on_message(client, userdata, message):
     LOG.info('MQTT: ' + str(message.payload.decode("utf-8")))
-    while True:
-        try:
-            rabbit_queue = channel.queue_declare(queue='kalpa_queue', durable=True, passive=True)
-            q_l = rabbit_queue.method.message_count
-            channel.basic_publish(
-                exchange='',
-                routing_key='kalpa_queue',
-                body=str(message.payload.decode("utf-8")),
-                properties=pika.BasicProperties(delivery_mode = 2)
-            )
+    #while True:
+    #    try:
+    rabbit_queue = channel.queue_declare(queue='kalpa_queue', durable=True, passive=True)
+    q_l = rabbit_queue.method.message_count
+    channel.basic_publish(
+        exchange='',
+        routing_key='kalpa_queue',
+        body=str(message.payload.decode("utf-8")),
+        properties=pika.BasicProperties(delivery_mode = 2)
+    )
 
-            if(int(q_l) >= (MAX_MESSAGES-1)):
-                client.unsubscribe(topic)
-                while True:
-                    time.sleep(1)
-                    LOG.info('Waiting for publishing...')
-                    q_ll = rabbit_queue.method.message_count
-                    if(int(q_ll) <= (MAX_MESSAGES/2)):
-                        client.subscribe(topic, qos = 2)
-                        break
-            break
-        except:
-            LOG.error('Error during update RubbitMQ queue!!! Try again...')
+    if(int(q_l) >= (MAX_MESSAGES-1)):
+        client.unsubscribe(topic)
+        while True:
+            time.sleep(1)
+            LOG.info('Waiting for publishing...')
+            q_ll = rabbit_queue.method.message_count
+            if(int(q_ll) <= (MAX_MESSAGES/2)):
+                client.subscribe(topic, qos = 2)
+                break
+    #        break
+    #    except:
+    #        LOG.error('Error during update RubbitMQ queue!!! Try again...')
 
 time.sleep(8)
 LOG.info('Starting connection with RubbitMQ server...')
