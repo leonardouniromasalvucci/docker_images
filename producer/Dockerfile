@@ -13,5 +13,3 @@ RUN pip3 install pika==1.0.0
 ENV PYTHONPATH /usr/src/app
 
 RUN wget https://raw.githubusercontent.com/leonardouniromasalvucci/docker_images/master/producer/producer.py
-
-ENV PYTHONPATH /usr/src/app
