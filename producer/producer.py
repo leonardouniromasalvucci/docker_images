@@ -47,6 +47,7 @@ def on_message(client, userdata, message):
         except:
             LOG.error('Error during update RubbitMQ queue!!! Try again...')
 
+time.sleep(8)
 LOG.info('Starting connection with RubbitMQ server...')
 while True:
     try:

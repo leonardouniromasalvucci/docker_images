@@ -55,6 +55,8 @@ def callback(ch, method, properties, body):
                         break
                 except:
                         LOG.error("Error during update gridDB. I'll try again")
+
+time.sleep(8)
 while True:
         try:
                 connection = pika.BlockingConnection(pika.ConnectionParameters(host=machine_ip, port=5672))
