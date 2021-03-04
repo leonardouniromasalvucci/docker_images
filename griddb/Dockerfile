@@ -26,4 +26,4 @@ ENV PYTHONPATH /python_client-0.8.1-rc0
 RUN yum -y install python3-pip
 RUN pip3 install paho-mqtt
 RUN pip3 install pika==1.0.0
-RUN wget https://raw.githubusercontent.com/leonardouniromasalvucci/container_image_app/master/griddbc.py
+RUN wget https://raw.githubusercontent.com/leonardouniromasalvucci/docker_images/master/griddb/griddbc.py
