@@ -21,6 +21,7 @@ connected = False
 LOG.info('Trying to connect to GridDB...')
 
 while True:
+        time.sleep(5)
         try:
                 factory = griddb.StoreFactory.get_instance()
                 gridstore = factory.get_store(
@@ -45,7 +46,7 @@ while True:
 
 def callback(ch, method, properties, body):
         y = json.loads(str(body.decode()))
-        LOG.info(" [x] Received %r" % y)
+        LOG.info("Received %r" % y)
         while True:
                 try:
                         now = datetime.datetime.utcnow()
@@ -56,15 +57,13 @@ def callback(ch, method, properties, body):
                 except:
                         LOG.error("Error during update gridDB. I'll try again")
 
-time.sleep(8)
 while True:
+        time.sleep(5)
         try:
                 connection = pika.BlockingConnection(pika.ConnectionParameters(host=machine_ip, port=5672))
                 channel = connection.channel()
-
                 channel.queue_declare(queue='kalpa_queue', durable=True)
-                LOG.info(' [*] Waiting for messages. To exit press CTRL+C')
-
+                LOG.info('Waiting for RubbitMQ messages.')
                 channel.basic_qos(prefetch_count=1)
                 channel.basic_consume(queue='kalpa_queue', on_message_callback=callback)
                 channel.start_consuming()
