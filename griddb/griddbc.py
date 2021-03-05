@@ -52,7 +52,7 @@ def callback(ch, method, properties, body):
         #try:
         now = datetime.datetime.utcnow()
         res = col.put([now, str(y["device_id"]), str(y["value"])])
-        LOG.info("GridDB reply: " + res)
+        LOG.info("GridDB reply: " + str(res))
         ch.basic_ack(delivery_tag=method.delivery_tag)
                 #break
         #except:
