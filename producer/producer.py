@@ -48,25 +48,19 @@ def on_message(client, userdata, message):
 time.sleep(8)
 
 LOG.info('Starting connection with RubbitMQ server...')
-
-while True:
-    try:
-        connection = pika.BlockingConnection(pika.ConnectionParameters(host = machine_ip, port = 5672))
-        channel = connection.channel()
-        rabbit_queue = channel.queue_declare(queue='kalpa_queue', durable=True, passive=True)
-        break
-    except:
-        LOG.error('Connection error with RubbitMQ server.')
+try:
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host = machine_ip, port = 5672))
+    channel = connection.channel()
+    rabbit_queue = channel.queue_declare(queue='kalpa_queue', durable=True, passive=True)
+except:
+    LOG.error('Connection error with RubbitMQ server.')
 
 LOG.info('Starting connection with MQTT Broker...')
-
-while True:
-    try:
-        client = mqtt.Client(client_id = mqtt_id, clean_session = False)
-        client.on_connect = on_connect
-        client.on_message = on_message
-        client.connect('InternalKalpaELB-c6dcbc9047674e10.elb.eu-west-1.amazonaws.com')
-        client.loop_forever()
-        break
-    except:
-        LOG.error('Connection error with MQTT Broker.')
+try:
+    client = mqtt.Client(client_id = mqtt_id, clean_session = False)
+    client.on_connect = on_connect
+    client.on_message = on_message
+    client.connect('InternalKalpaELB-c6dcbc9047674e10.elb.eu-west-1.amazonaws.com')
+    client.loop_forever()
+except:
+    LOG.error('Connection error with MQTT Broker.')
