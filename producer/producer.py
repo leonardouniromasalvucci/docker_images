@@ -5,11 +5,12 @@ logging.basicConfig(level=logging.INFO)
 LOG = logging.getLogger(__name__)
 
 try:
-    bashCommandName = `echo $NAME`
+    bashCommandName = 'echo $NAME'
     output = subprocess.check_output(['bash','-c', bashCommandName]) 
     local_ip = socket.gethostbyname(socket.gethostname())
     machine_ip = os.environ['RUBBITMQ_HOST_IP']
     mqtt_id = machine_ip+''+ output
+    LOG.error('The MQTT id is: ' + str(mqtt_id))
 except:
     LOG.error('Error during the processing of the HOST IP')
 
