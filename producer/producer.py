@@ -25,6 +25,7 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, message):
     LOG.info('MQTT: ' + str(message.payload.decode("utf-8")))
     try:
+        rabbit_queue = channel.queue_declare(queue='kalpa_queue', durable=True)
         LOG.info(rabbit_queue.method.message_count)
         channel.basic_publish(
             exchange='',
@@ -53,12 +54,11 @@ while True:
     try:
         connection = pika.BlockingConnection(pika.ConnectionParameters(host=machine_ip, port=5672))
         channel = connection.channel()
-        rabbit_queue = channel.queue_declare(queue='kalpa_queue', durable=True)
         break
     except:
         LOG.error('Connection error with RubbitMQ server.')
         sys.exit()
-
+LOG.info('RubbitMQ connection established.')
 LOG.info('Starting connection with MQTT Broker...')
 while True:
     time.sleep(5)
