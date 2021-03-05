@@ -49,14 +49,14 @@ def callback(ch, method, properties, body):
         LOG.info("Received %r" % y)
         #while True:
         #        time.sleep(1)
-        try:
-                now = datetime.datetime.utcnow()
-                res = col.put([now, str(y["device_id"]), str(y["value"])])
-                LOG.info("GridDB reply: " + res)
-                ch.basic_ack(delivery_tag=method.delivery_tag)
+        #try:
+        now = datetime.datetime.utcnow()
+        res = col.put([now, str(y["device_id"]), str(y["value"])])
+        LOG.info("GridDB reply: " + res)
+        ch.basic_ack(delivery_tag=method.delivery_tag)
                 #break
-        except:
-                LOG.error("Error during update gridDB. I'll try again")
+        #except:
+        #        LOG.error("Error during update gridDB. I'll try again")
 
 while True:
         time.sleep(5)
