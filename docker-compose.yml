@@ -4,14 +4,14 @@ rabbitmq:
   ports:
   - 5672:5672 # port for the daemon API
   - 15672:15672 # port for the RabbitMQ management interface
-#griddb:
-#  build: griddb
-#  restart: always
-#  links:
-#  - rabbitmq
-#  command: python3 griddbc.py
-#  environment:
-#        - RUBBITMQ_HOST_IP=${HOSTNAME}
+griddb:
+  build: griddb
+  restart: always
+  links:
+  - rabbitmq
+  command: python3 griddbc.py
+  environment:
+        - RUBBITMQ_HOST_IP=${HOSTNAME}
 producer:
   build: producer
   restart: always
