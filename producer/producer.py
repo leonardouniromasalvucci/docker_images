@@ -50,9 +50,9 @@ time.sleep(20)
 
 LOG.info('Starting connection with RubbitMQ server...')
 try:
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host = machine_ip, port = 5672))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host=machine_ip, port=5672))
     channel = connection.channel()
-    rabbit_queue = channel.queue_declare(queue='kalpa_queue', durable=True, passive=True)
+    rabbit_queue = channel.queue_declare(queue='kalpa_queue', durable=True)
 except:
     LOG.error('Connection error with RubbitMQ server.')
     sys.exit()
