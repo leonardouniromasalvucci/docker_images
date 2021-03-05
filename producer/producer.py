@@ -1,13 +1,15 @@
-import pika, logging, sys, os, socket, time
+import pika, logging, sys, os, socket, time, subprocess
 import paho.mqtt.client as mqtt
 
 logging.basicConfig(level=logging.INFO)
 LOG = logging.getLogger(__name__)
 
 try:
+    bashCommandName = `echo $NAME`
+    output = subprocess.check_output(['bash','-c', bashCommandName]) 
     local_ip = socket.gethostbyname(socket.gethostname())
     machine_ip = os.environ['RUBBITMQ_HOST_IP']
-    mqtt_id = machine_ip+''+local_ip
+    mqtt_id = machine_ip+''+ output
 except:
     LOG.error('Error during the processing of the HOST IP')
 
@@ -54,8 +56,9 @@ def on_message(client, userdata, message):
             while True:
                 time.sleep(1)
                 LOG.info('Waiting for publishing...')
+                rabbit_queue = channel.queue_declare(queue='kalpa_queue', durable=True)
                 if(int(rabbit_queue.method.message_count) <= (MAX_MESSAGES/2)):
-                    client.subscribe(topic, qos = 2)
+                    client.subscribe(topic, qos=2)
                     break
     except:
         LOG.error('Error during update RubbitMQ queue.')
