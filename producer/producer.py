@@ -18,6 +18,21 @@ q_name = None
 rabbit_queue = None
 MAX_MESSAGES = 10
 
+
+'''
+CHECK CONNECTION FOR EACH RECEIVED MESSAGE, IF NOT RECONNECT 
+try:
+  connection = pika.BlockingConnection(parameters)
+  if connection.is_open:
+    print('OK')
+    connection.close()
+    exit(0)
+except Exception as error:
+  print('Error:', error.__class__.__name__)
+  exit(1)
+'''
+
+
 def on_connect(client, userdata, flags, rc):
     client.subscribe(topic, qos=2)
     LOG.info('MQTT: Process is connected and it is ready to subscribe.')
