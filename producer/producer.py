@@ -16,7 +16,7 @@ topic = '$share/group1/0001/'
 channel = None
 q_name = None
 rabbit_queue = None
-MAX_MESSAGES = 5
+MAX_MESSAGES = 12
 
 def on_connect(client, userdata, flags, rc):
     client.subscribe(topic, qos=2)
@@ -26,6 +26,7 @@ def on_message(client, userdata, message):
     LOG.info('MQTT: ' + str(message.payload.decode("utf-8")))
     try:
         q_l = rabbit_queue.method.message_count
+        LOG.info(q_l)
         channel.basic_publish(
             exchange='',
             routing_key='kalpa_queue',
@@ -52,7 +53,7 @@ LOG.info('Starting connection with RubbitMQ server...')
 try:
     connection = pika.BlockingConnection(pika.ConnectionParameters(host=machine_ip, port=5672))
     channel = connection.channel()
-    rabbit_queue = channel.queue_declare(queue='kalpa_queue', durable=True)
+    rabbit_queue = channel.queue_declare(queue='kalpa_queue', durable=True, exclusive=False, auto_delete=False)
 except:
     LOG.error('Connection error with RubbitMQ server.')
     sys.exit()
