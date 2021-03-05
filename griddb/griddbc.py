@@ -37,7 +37,7 @@ while True:
                                 griddb.ContainerType.TIME_SERIES, True)
 
                 col = gridstore.put_container(conInfo)
-                LOG.info('CONNCTED to GridDB.....')
+                LOG.info('CONNECTED to GridDB.....')
                 break
 
         except griddb.GSException as e:
@@ -47,15 +47,16 @@ while True:
 def callback(ch, method, properties, body):
         y = json.loads(str(body.decode()))
         LOG.info("Received %r" % y)
-        while True:
-                try:
-                        now = datetime.datetime.utcnow()
-                        res = col.put([now, str(y["device_id"]), str(y["value"])])
-                        LOG.info("GridDB reply: " + res)
-                        ch.basic_ack(delivery_tag=method.delivery_tag)
-                        break
-                except:
-                        LOG.error("Error during update gridDB. I'll try again")
+        #while True:
+        #        time.sleep(1)
+        try:
+                now = datetime.datetime.utcnow()
+                res = col.put([now, str(y["device_id"]), str(y["value"])])
+                LOG.info("GridDB reply: " + res)
+                ch.basic_ack(delivery_tag=method.delivery_tag)
+                #break
+        except:
+                LOG.error("Error during update gridDB. I'll try again")
 
 while True:
         time.sleep(5)
@@ -67,6 +68,7 @@ while True:
                 channel.basic_qos(prefetch_count=1)
                 channel.basic_consume(queue='kalpa_queue', on_message_callback=callback)
                 channel.start_consuming()
+                LOG.error("RubbitMQ connection established.")
                 break
         except:
                 LOG.error("Connection error with RubbitMQ server.")
