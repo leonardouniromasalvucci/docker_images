@@ -3,6 +3,7 @@
 import paho.mqtt.client as mqtt
 import griddb_python as griddb
 import pika, logging, os, sys, datetime, json, time
+from datetime import datetime
 
 logging.basicConfig(level=logging.INFO)
 LOG = logging.getLogger(__name__)
@@ -49,8 +50,7 @@ def callback(ch, method, properties, body):
         LOG.info("Received %r" % y)
         while True:
                 try:
-                        now = datetime.datetime.utcnow()
-                        res = col.put([now, str(y["device_id"]), str(y["value"])])
+                        res = col.put([datetime.utcfromtimestamp(y["timestamp"]), str(y["device_id"]), str(y["value"])])
                         LOG.info("GridDB reply: " + str(res))
                         ch.basic_ack(delivery_tag=method.delivery_tag)
                         break

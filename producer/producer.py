@@ -5,12 +5,12 @@ logging.basicConfig(level=logging.INFO)
 LOG = logging.getLogger(__name__)
 
 try:
-    bashCommandName = 'echo $NAME'
-    output = subprocess.check_output(['bash','-c', bashCommandName]) 
+    #bashCommandName = 'echo $NAME'
+    #output = subprocess.check_output(['bash','-c', bashCommandName]) 
     local_ip = socket.gethostbyname(socket.gethostname())
     machine_ip = os.environ['RUBBITMQ_HOST_IP']
-    mqtt_id = machine_ip+''+ output
-    LOG.error('The MQTT id is: ' + str(mqtt_id))
+    mqtt_id = machine_ip+''+ local_ip
+    #LOG.error('The MQTT id is: ' + str(mqtt_id))
 except:
     LOG.error('Error during the processing of the HOST IP')
 
@@ -19,7 +19,7 @@ topic = '$share/group1/0001/'
 channel = None
 q_name = None
 rabbit_queue = None
-MAX_MESSAGES = 10
+MAX_MESSAGES = 6
 
 
 '''
