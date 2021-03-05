@@ -58,19 +58,19 @@ def callback(ch, method, properties, body):
         #except:
         #        LOG.error("Error during update gridDB. I'll try again")
 
-while True:
-        time.sleep(5)
-        try:
-                connection = pika.BlockingConnection(pika.ConnectionParameters(host=machine_ip, port=5672))
-                channel = connection.channel()
-                channel.queue_declare(queue='kalpa_queue', durable=True)
-                LOG.info('Waiting for RubbitMQ messages.')
-                channel.basic_qos(prefetch_count=1)
-                channel.basic_consume(queue='kalpa_queue', on_message_callback=callback)
-                channel.start_consuming()
-                LOG.error("RubbitMQ connection established.")
-                break
-        except:
-                LOG.error("Connection error with RubbitMQ server.")
+#while True:
+#        time.sleep(5)
+#        try:
+connection = pika.BlockingConnection(pika.ConnectionParameters(host=machine_ip, port=5672))
+channel = connection.channel()
+channel.queue_declare(queue='kalpa_queue', durable=True)
+LOG.info('Waiting for RubbitMQ messages.')
+#channel.basic_qos(prefetch_count=1)
+channel.basic_consume(queue='kalpa_queue', on_message_callback=callback)
+channel.start_consuming()
+LOG.info("RubbitMQ connection established.")
+#                break
+#        except:
+#                LOG.error("Connection error with RubbitMQ server.")
 
 
