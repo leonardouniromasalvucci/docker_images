@@ -25,7 +25,7 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, message):
     LOG.info('MQTT: ' + str(message.payload.decode("utf-8")))
     try:
-        rabbit_queue = channel.queue_declare(queue='kalpa_queue', durable=True)
+        rabbit_queue = channel.queue_declare(queue='kalpa_queue', durable=True, passive=True)
         LOG.info(rabbit_queue.method.message_count)
         channel.basic_publish(
             exchange='',
@@ -34,7 +34,7 @@ def on_message(client, userdata, message):
             properties=pika.BasicProperties(delivery_mode = 2)
         )
 
-        if(int(q_l) >= (MAX_MESSAGES-1)):
+        if(int(rabbit_queue.method.message_count) >= (MAX_MESSAGES-1)):
             client.unsubscribe(topic)
             while True:
                 time.sleep(1)
