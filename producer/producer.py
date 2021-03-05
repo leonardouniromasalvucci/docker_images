@@ -15,7 +15,7 @@ topic = '$share/group1/0001/'
 
 channel = None
 q_name = None
-MAX_MESSAGES = 6
+MAX_MESSAGES = 10
 
 def on_connect(client, userdata, flags, rc):
     client.subscribe(topic, qos=2)
@@ -33,15 +33,14 @@ def on_message(client, userdata, message):
             properties=pika.BasicProperties(delivery_mode=2)
         )
 
-        '''if(int(rabbit_queue.method.message_count) >= (MAX_MESSAGES-1)):
+        if(int(rabbit_queue.method.message_count) >= (MAX_MESSAGES-1)):
             client.unsubscribe(topic)
             while True:
                 time.sleep(1)
                 LOG.info('Waiting for publishing...')
-                q_ll = rabbit_queue.method.message_count
-                if(int(q_ll) <= (MAX_MESSAGES/2)):
+                if(int(rabbit_queue.method.message_count) <= (MAX_MESSAGES/2)):
                     client.subscribe(topic, qos = 2)
-                    break'''
+                    break
     except:
         LOG.error('Error during update RubbitMQ queue.')
         sys.exit()
