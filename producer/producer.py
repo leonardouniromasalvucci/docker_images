@@ -24,7 +24,7 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, message):
     LOG.info('MQTT: ' + str(message.payload.decode("utf-8")))
     try:
-        rabbit_queue = channel.queue_declare(queue='kalpa_queue', durable=True, passive=True)
+        rabbit_queue = channel.queue_declare(queue='kalpa_queue', durable=True)
         LOG.info(rabbit_queue.method.message_count)
         channel.basic_publish(
             exchange='',
