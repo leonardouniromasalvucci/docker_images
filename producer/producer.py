@@ -43,9 +43,10 @@ def on_message(client, userdata, message):
                     client.subscribe(topic, qos = 2)
                     break
     except:
-        LOG.error('Error during update RubbitMQ queue!!! Try again...')
+        LOG.error('Error during update RubbitMQ queue.')
+        sys.exit()
 
-time.sleep(8)
+time.sleep(20)
 
 LOG.info('Starting connection with RubbitMQ server...')
 try:
@@ -54,6 +55,7 @@ try:
     rabbit_queue = channel.queue_declare(queue='kalpa_queue', durable=True, passive=True)
 except:
     LOG.error('Connection error with RubbitMQ server.')
+    sys.exit()
 
 LOG.info('Starting connection with MQTT Broker...')
 try:
@@ -64,3 +66,4 @@ try:
     client.loop_forever()
 except:
     LOG.error('Connection error with MQTT Broker.')
+    sys.exit()
