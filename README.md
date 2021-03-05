@@ -18,7 +18,7 @@
 
 Set the environment variable RABBIT_HOST_IP. This should be the host IP you get using e.g. ifconfig.
 
-    $ export RABBIT_HOST_IP=<your host IP - not localhost or 127.0.0.1>  
+    $ export RABBIT_HOST_IP=$(hostname -i) //<your host IP - not localhost or 127.0.0.1>  
 
 Start containers
 
