@@ -1,22 +1,30 @@
-rabbitmq:
-  image: rabbitmq:3-management
+#rabbitmq:
+#  image: rabbitmq:3-management
+#  restart: always
+#  ports:
+#  - 5672:5672 # port for the daemon API
+#  - 15672:15672 # port for the RabbitMQ management interface
+#griddb:
+#  build: griddb
+#  restart: always
+#  links:
+#  - rabbitmq
+#  command: python3 griddbc.py
+#  environment:
+#        - RUBBITMQ_HOST_IP=${HOSTNAME}
+#producer:
+#  build: producer
+#  restart: always
+#  links:
+#  - rabbitmq
+#  command: python3 producer.py
+#  environment:
+#        - RUBBITMQ_HOST_IP=${HOSTNAME}
+
+mqtt-subscriber-griddb-client:
+  build: mqtt-subscriber-griddb-client
   restart: always
-  ports:
-  - 5672:5672 # port for the daemon API
-  - 15672:15672 # port for the RabbitMQ management interface
-griddb:
-  build: griddb
-  restart: always
-  links:
-  - rabbitmq
-  command: python3 griddbc.py
+  command: python3 mqtt-sub-griddb-c.py
   environment:
         - RUBBITMQ_HOST_IP=${HOSTNAME}
-producer:
-  build: producer
-  restart: always
-  links:
-  - rabbitmq
-  command: python3 producer.py
-  environment:
-        - RUBBITMQ_HOST_IP=${HOSTNAME}
+
