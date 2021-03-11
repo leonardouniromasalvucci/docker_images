@@ -9,9 +9,9 @@ logging.basicConfig(level=logging.INFO)
 LOG = logging.getLogger(__name__)
 
 try:
-    local_ip = socket.gethostbyname(socket.gethostname())
+    #local_ip = socket.gethostbyname(socket.gethostname())
     machine_ip = os.environ['RUBBITMQ_HOST_IP']
-    mqtt_id = machine_ip+''+ local_ip
+    #mqtt_id = machine_ip+''+ local_ip
 except:
     LOG.error('Error during the processing of the HOST IP')
 
@@ -26,15 +26,16 @@ def on_disconnect(client, userdata, rc):
 
 def on_connect(client, userdata, flags, rc):
         client.subscribe(topic, qos=2)
-        LOG.info('MQTT subscriber ' + str(mqtt_id) + ' is ready.')
+        LOG.info('MQTT subscriber ' + str(machine_ip) + ' is ready.')
 
 def on_message(client, userdata, message):
         LOG.info('MQTT: ' + str(message.payload.decode("utf-8")))
         y = json.loads(str(message.payload.decode("utf-8")))
         while True:
+                LOG.info('Try insertion of message: ' + str(message.payload.decode("utf-8")) + ' in GridDB...')
                 try:
                         res = col.put([datetime.utcfromtimestamp(y["timestamp"]), str(y["device_id"]), str(y["value"])])
-                        LOG.info("GridDB reply: " + str(res))
+                        LOG.info("GridDB reply: " + str(res) + '.')
                         break
                 except:
                         LOG.error("Error during update GridDB cluster.")
@@ -67,10 +68,10 @@ while True:
 while True:
         LOG.info('Trying to connect to MQTT Broker cluster...')
         try:
-                client = mqtt.Client(client_id = local_ip, clean_session = False)
+                client = mqtt.Client(client_id = machine_ip, clean_session = False)
                 client.on_connect = on_connect
                 client.on_message = on_message
-                client.connect('InternalKalpaELB-c6dcbc9047674e10.elb.eu-west-1.amazonaws.com', 1883, 5)
+                client.connect('InternalKalpaELB-c6dcbc9047674e10.elb.eu-west-1.amazonaws.com', 1883, 6)
                 client.loop_forever()
                 LOG.info('Connected to MQTT Broker cluster.')
                 break
