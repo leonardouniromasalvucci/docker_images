@@ -21,6 +21,8 @@ factory = None
 update = True
 connected = False
 
+def on_disconnect(client, userdata, rc):
+        sys.exit()
 
 def on_connect(client, userdata, flags, rc):
         client.subscribe(topic, qos=2)
@@ -34,6 +36,7 @@ def on_message(client, userdata, message):
                 LOG.info("GridDB reply: " + str(res))
         except:
                 LOG.error("Error during update GridDB cluster.")
+                client.disconnect()
                 sys.exit()
 
 
