@@ -34,7 +34,7 @@ def on_message(client, userdata, message):
                 LOG.info("GridDB reply: " + str(res))
         except:
                 LOG.error("Error during update GridDB cluster.")
-                client.disconnect()
+                sys.exit()
 
 
 while True:
