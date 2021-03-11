@@ -31,13 +31,13 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, message):
         LOG.info('MQTT: ' + str(message.payload.decode("utf-8")))
         y = json.loads(str(message.payload.decode("utf-8")))
-        try:
-                res = col.put([datetime.utcfromtimestamp(y["timestamp"]), str(y["device_id"]), str(y["value"])])
-                LOG.info("GridDB reply: " + str(res))
-        except:
-                LOG.error("Error during update GridDB cluster.")
-                client.disconnect()
-                sys.exit()
+        while True:
+                try:
+                        res = col.put([datetime.utcfromtimestamp(y["timestamp"]), str(y["device_id"]), str(y["value"])])
+                        LOG.info("GridDB reply: " + str(res))
+                        break
+                except:
+                        LOG.error("Error during update GridDB cluster.")
 
 
 while True:
