@@ -56,6 +56,8 @@ while True:
                                 griddb.ContainerType.TIME_SERIES, True)
 
                 col = gridstore.put_container(conInfo)
+                col.create_index(["timestamp", "sensorId"], griddb.IndexType.DEFAULT)
+
                 LOG.info('Connected to GridDB cluster.')
                 break
 
