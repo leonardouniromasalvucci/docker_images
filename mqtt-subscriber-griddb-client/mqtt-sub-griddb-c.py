@@ -5,13 +5,11 @@ import griddb_python as griddb
 import pika, logging, os, sys, datetime, json, time, socket, subprocess, threading
 from datetime import datetime
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 LOG = logging.getLogger(__name__)
 
 try:
-    #local_ip = socket.gethostbyname(socket.gethostname())
     machine_ip = os.environ['RUBBITMQ_HOST_IP']
-    #mqtt_id = machine_ip+''+ local_ip
 except:
     LOG.error('Error during the processing of the HOST IP')
 
