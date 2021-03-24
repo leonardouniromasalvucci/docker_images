@@ -69,6 +69,7 @@ while True:
         LOG.info('Trying to connect to MQTT Broker cluster...')
         try:
                 client = mqtt.Client(client_id = machine_ip, clean_session = False)
+                client.enable_logger(LOG)
                 client.on_connect = on_connect
                 client.on_message = on_message
                 client.connect('InternalKalpaELB-c6dcbc9047674e10.elb.eu-west-1.amazonaws.com', 1883, 6)

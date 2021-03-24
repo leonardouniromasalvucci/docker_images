@@ -23,3 +23,7 @@ Set the environment variable RABBIT_HOST_IP. This should be the host IP you get 
 Start containers
 
     $ docker-compose up --build
+
+[ec2-user@ip-10-0-0-179 ~]$ nano docker-setup.sh
+[ec2-user@ip-10-0-0-179 ~]$ chmod +x docker-setup.sh
+[ec2-user@ip-10-0-0-179 ~]$ ./docker-setup.sh

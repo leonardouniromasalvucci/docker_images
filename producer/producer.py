@@ -5,12 +5,9 @@ logging.basicConfig(level=logging.INFO)
 LOG = logging.getLogger(__name__)
 
 try:
-    #bashCommandName = 'echo $NAME'
-    #output = subprocess.check_output(['bash','-c', bashCommandName]) 
-    local_ip = socket.gethostbyname(socket.gethostname())
+    #local_ip = socket.gethostbyname(socket.gethostname())
     machine_ip = os.environ['RUBBITMQ_HOST_IP']
-    mqtt_id = machine_ip+''+ local_ip
-    #LOG.error('The MQTT id is: ' + str(mqtt_id))
+    mqtt_id = machine_ip#+''+ local_ip
 except:
     LOG.error('Error during the processing of the HOST IP')
 
@@ -53,19 +50,18 @@ def on_message(client, userdata, message):
         )
 
         if(int(rabbit_queue.method.message_count) >= (MAX_MESSAGES-1)):
-            client.unsubscribe(topic)
+            client.disconnect()
+            '''client.unsubscribe(topic)
             while True:
                 time.sleep(1)
                 LOG.info('Waiting for publishing...')
                 rabbit_queue = channel.queue_declare(queue='kalpa_queue', durable=True)
                 if(int(rabbit_queue.method.message_count) <= (MAX_MESSAGES/2)):
                     client.subscribe(topic, qos=2)
-                    break
+                    break'''
     except:
         LOG.error('Error during update RubbitMQ queue.')
         sys.exit()
-
-
 
 LOG.info('Starting connection with RubbitMQ server...')
 while True:
@@ -78,6 +74,7 @@ while True:
         LOG.error('Connection error with RubbitMQ server.')
         sys.exit()
 LOG.info('RubbitMQ connection established.')
+
 LOG.info('Starting connection with MQTT Broker...')
 while True:
     time.sleep(5)
