@@ -74,7 +74,7 @@ while True:
                 client.on_message = on_message
                 client.connect('InternalKalpaELB-c6dcbc9047674e10.elb.eu-west-1.amazonaws.com', 1883, 6)
                 client.loop_forever()
-                LOG.info('Connected to MQTT Broker cluster.')
+                LOG.info('Connected to MQTT Brokers cluster.')
                 break
         except:
                 LOG.error("Connection error with MQTT Broker cluster. I'll try again...")
