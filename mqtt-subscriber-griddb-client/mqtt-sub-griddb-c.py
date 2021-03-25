@@ -49,15 +49,13 @@ while True:
                 username="admin",
                 password="admin")
 
-                conInfo = griddb.ContainerInfo("SensorValuesKalpaLast",
+                conInfo = griddb.ContainerInfo("KalpaSensorsDB",
                                 [["timestamp", griddb.Type.TIMESTAMP],
                                 ["sensorId", griddb.Type.STRING],
                                 ["sensorValue", griddb.Type.STRING]],
                                 griddb.ContainerType.TIME_SERIES, True)
 
                 col = gridstore.put_container(conInfo)
-                col.create_index(["timestamp", "sensorId"], griddb.IndexType.DEFAULT)
-
                 LOG.info('Connected to GridDB cluster.')
                 break
 
