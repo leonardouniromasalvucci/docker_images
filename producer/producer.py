@@ -21,6 +21,7 @@ channel = None
 q_name = None
 rabbit_queue = None
 MAX_MESSAGES = 6
+res = None
 
 client = None
 mqtt.Client.connected_flag = False
@@ -39,10 +40,11 @@ def on_connect(client, userdata, flags, reasonCode, properties=None):
             LOG.info('Connection error.')
 
 def on_message(client, userdata, message):
+    global res
     LOG.info('MQTT: ' + str(message.payload.decode("utf-8")))
     try:
-        rabbit_queue = channel.queue_declare(queue='kalpa_queue', durable=True)
-        LOG.info(rabbit_queue.method.message_count)
+        #rabbit_queue = channel.queue_declare(queue='kalpa_queue', durable=True)
+        LOG.info(res.method.message_count)
         channel.basic_publish(
             exchange='',
             routing_key='kalpa_queue',
@@ -50,7 +52,7 @@ def on_message(client, userdata, message):
             properties=pika.BasicProperties(delivery_mode=2)
         )
 
-        if(int(rabbit_queue.method.message_count) >= (MAX_MESSAGES-1)):
+        if(int(res.method.message_count) >= (MAX_MESSAGES-1)):
             client.disconnect()
 
     except:
@@ -63,6 +65,19 @@ while True:
     try:
         connection = pika.BlockingConnection(pika.ConnectionParameters(host = mqtt_id, port = 5672))
         channel = connection.channel()
+        channel.queue_declare(
+            queue="kalpa_queue",
+            durable=True,
+            exclusive=False,
+            auto_delete=False
+        )
+        res = channel.queue_declare(
+            queue="kalpa_queue",
+            durable=True,
+            exclusive=False,
+            auto_delete=False,
+            passive=True
+        )
         break
     except:
         LOG.error('Connection error with RubbitMQ server.')
@@ -90,10 +105,13 @@ while True:
 
 while(True):
     if(client.connected_flag==False):
-        rabbit_queue = channel.queue_declare(queue='kalpa_queue', durable=True)
-        if(int(rabbit_queue.method.message_count) <= (MAX_MESSAGES/2)):
-            client.loop_stop()
+        client.loop_stop()
+        LOG.info('MQTT DISCONNECTED')
+        LOG.info('CHECKING QUEUE SIZE')
+        LOG.info(res)
+        #rabbit_queue = channel.queue_declare(queue='kalpa_queue', durable=True)
+        if(int(res.method.message_count) <= (MAX_MESSAGES/2)):
             client.reconnect()
             client.loop_start()
             
-    time.sleep(1)
+    time.sleep(10)
