@@ -32,8 +32,9 @@ def on_message(client, userdata, message):
         while True:
                 LOG.info('Try insertion of message: ' + str(message.payload.decode("utf-8")) + ' in GridDB...')
                 try:
-                        res = col.put([datetime.utcfromtimestamp(y["timestamp"]), str(y["device_id"]), str(y["value"])])
+                        res = col.put([None, str(y["device_id"]), str(y["value"])])
                         LOG.info("GridDB reply: " + str(res) + '.')
+                        #datetime.utcfromtimestamp(y["timestamp"])
                         break
                 except:
                         LOG.error("Error during update GridDB cluster.")
@@ -49,9 +50,8 @@ while True:
                 username="admin",
                 password="admin")
 
-                conInfo = griddb.ContainerInfo("KalpaSensorsDB2",
+                conInfo = griddb.ContainerInfo("KalpaSensorsDByes",
                                 [["timestamp", griddb.Type.TIMESTAMP],
-                                ["timestamp2", griddb.Type.TIMESTAMP],
                                 ["sensorId", griddb.Type.STRING],
                                 ["sensorValue", griddb.Type.STRING]],
                                 griddb.ContainerType.TIME_SERIES, True)
