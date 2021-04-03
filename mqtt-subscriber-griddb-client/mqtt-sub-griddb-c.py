@@ -51,7 +51,7 @@ while True:
                 username="admin",
                 password="admin")
 
-                conInfo = griddb.ContainerInfo("KalpaSensorsDByes",
+                conInfo = griddb.ContainerInfo("KalpaSensorsDByeslast",
                                 [["timestamp", griddb.Type.TIMESTAMP],
                                 ["timestamp2", griddb.Type.TIMESTAMP],
                                 ["sensorId", griddb.Type.STRING],
