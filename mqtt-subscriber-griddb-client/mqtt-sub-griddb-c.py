@@ -32,7 +32,8 @@ def on_message(client, userdata, message):
         while True:
                 LOG.info('Try insertion of message: ' + str(message.payload.decode("utf-8")) + ' in GridDB...')
                 try:
-                        res = col.put([None, str(y["device_id"]), str(y["value"])])
+                        now = datetime.datetime.utcnow()
+                        res = col.put([now, datetime.utcfromtimestamp(y["timestamp"]), str(y["device_id"]), str(y["value"])])
                         LOG.info("GridDB reply: " + str(res) + '.')
                         #datetime.utcfromtimestamp(y["timestamp"])
                         break
@@ -52,6 +53,7 @@ while True:
 
                 conInfo = griddb.ContainerInfo("KalpaSensorsDByes",
                                 [["timestamp", griddb.Type.TIMESTAMP],
+                                ["timestamp2", griddb.Type.TIMESTAMP],
                                 ["sensorId", griddb.Type.STRING],
                                 ["sensorValue", griddb.Type.STRING]],
                                 griddb.ContainerType.TIME_SERIES, True)
