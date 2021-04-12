@@ -36,14 +36,14 @@ def on_message(client, userdata, message):
                         conInfo = griddb.ContainerInfo("home-"+sub_topics[0]+"_device-"+sub_topics[1],
                                 [["timestamp", griddb.Type.TIMESTAMP],
                                 #["timestamp2", griddb.Type.TIMESTAMP],
-                                ["sensorId", griddb.Type.STRING],
-                                ["sensorValue", griddb.Type.STRING]],
+                                #["sensorId", griddb.Type.STRING],
+                                ["value", griddb.Type.STRING]],
                                 griddb.ContainerType.TIME_SERIES, True)
 
                         col = gridstore.put_container(conInfo)
                         col.set_auto_commit(True)
-                        #now = datetime.datetime.utcnow()
-                        r = col.put([datetime.utcfromtimestamp(y["timestamp"]), str(y["device_id"]), str(y["value"])])
+                        #now = datetime.datetime.utcnow(), str(y["device_id"])
+                        r = col.put([datetime.utcfromtimestamp(y["timestamp"]), str(y["value"])])
                         LOG.info("GridDB reply: " + str(r) + '.')
                         break
                 except:
