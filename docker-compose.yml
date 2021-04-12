@@ -20,11 +20,17 @@
 #  command: python3 producer.py
 #  environment:
 #        - RUBBITMQ_HOST_IP=${HOSTNAME}
+#mqtt-subscriber-griddb-client:
+#  build: mqtt-subscriber-griddb-client
+#  restart: always
+#  command: python3 mqtt-sub-griddb-c.py
+#  environment:
+#        - HOST_IP=${HOSTNAME}
 
-mqtt-subscriber-griddb-client:
-  build: mqtt-subscriber-griddb-client
+rest-ws:
+  build: rest-ws
   restart: always
-  command: python3 mqtt-sub-griddb-c.py
-  environment:
-        - HOST_IP=${HOSTNAME}
+  ports:
+   - 80:80
+  command: python3 rest-ws.py
 
