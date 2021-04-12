@@ -26,5 +26,5 @@ mqtt-subscriber-griddb-client:
   restart: always
   command: python3 mqtt-sub-griddb-c.py
   environment:
-        - RUBBITMQ_HOST_IP=${HOSTNAME}
+        - HOST_IP=${HOSTNAME}
 
