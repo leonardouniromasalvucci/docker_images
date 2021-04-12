@@ -33,7 +33,7 @@ def on_message(client, userdata, message):
         while True:
                 LOG.info('Try insertion of message: ' + str(message.payload.decode("utf-8")) + ' in GridDB...')
                 try:
-                        conInfo = griddb.ContainerInfo(sub_topics[0]+"_"+sub_topics[1],
+                        conInfo = griddb.ContainerInfo("home-"+sub_topics[0]+"_device-"+sub_topics[1],
                                 [["timestamp", griddb.Type.TIMESTAMP],
                                 #["timestamp2", griddb.Type.TIMESTAMP],
                                 ["sensorId", griddb.Type.STRING],
@@ -41,11 +41,10 @@ def on_message(client, userdata, message):
                                 griddb.ContainerType.TIME_SERIES, True)
 
                         col = gridstore.put_container(conInfo)
-                        col.set_auto_commit(False)
+                        col.set_auto_commit(True)
                         #now = datetime.datetime.utcnow()
-                        col.put([datetime.utcfromtimestamp(y["timestamp"]), str(y["device_id"]), str(y["value"])])
-                        res = col.commit()
-                        LOG.info("GridDB reply: " + str(res) + '.')
+                        r = col.put([datetime.utcfromtimestamp(y["timestamp"]), str(y["device_id"]), str(y["value"])])
+                        LOG.info("GridDB reply: " + str(r) + '.')
                         break
                 except:
                         LOG.error("Error during update GridDB cluster.")
