@@ -3,6 +3,7 @@
 import griddb_python as griddb
 import flask, logging, os, sys, datetime, json, time, socket, subprocess, threading
 from datetime import datetime
+from flask import request
 
 logging.basicConfig(level=logging.INFO)
 LOG = logging.getLogger(__name__)
@@ -38,13 +39,13 @@ def connect_to_griddb():
 
 @app.route('/', methods=['GET'])
 def home():
-    return "<h1>GridDB Client</h1><p>GridDb client to extract data from cluster.</p>"
+    return "<h1>GridDB Client</h1><p>GridDB client to extract data from cluster.</p>"
 
 
-@app.route('/data/<homeid>/<devid>', methods=['GET'])
-def get_data(homeid, devid):
+@app.route('/data/<homeid>')
+def get_data(homeid):
         try:
-                NumContainer = devid
+                NumContainer = 2
                 LOG.info("[MultiGet S]")
 
                 listCon = []
