@@ -44,12 +44,12 @@ def get_data(homeid):
                         password="admin"
                 )
 
-                NumContainer = 2
                 LOG.info("[MultiGet S] HOME ID = " + homeid)
 
                 listCon = []
                 listQuery = []
-                for i in range(1, NumContainer+1):
+                #NumContainer = 2
+                '''for i in range(1, NumContainer+1):
                         container = gridstore.get_container("home-"+homeid+"_device-"+str(i))
                         if container == None:
                                 LOG.info("container: None")
@@ -59,6 +59,24 @@ def get_data(homeid):
                                 LOG.info("query: None")
                         listQuery.append(query)
                         LOG.info("home-"+homeid+"_device-" + str(i))
+                gridstore.fetch_all(listQuery)'''
+
+                i=0
+                while True:
+                        try:
+                                container = gridstore.get_container("home-"+homeid+"_device-"+str(i))
+                                if container == None:
+                                        LOG.info("container: None")
+                                listCon.append(container)
+                                query = container.query("select * where timestamp > TIMESTAMPADD(MINUTE, NOW(), -30)")
+                                if query == None:
+                                        LOG.info("query: None")
+                                listQuery.append(query)
+                                LOG.info("home-"+homeid+"_device-" + str(i))
+                                i=i+1
+                        except:
+                                break
+                        
                 gridstore.fetch_all(listQuery)
                 for q in listQuery:
                         rs = q.get_row_set()
