@@ -13,28 +13,8 @@ col = None
 factory = None
 update = True
 
-
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
-
-def connect_to_griddb():
-        while True:
-                LOG.info('Trying to connect to GridDB cluster...')
-                try:
-                        factory = griddb.StoreFactory.get_instance()
-                        gridstore = factory.get_store(
-                                notification_member="10.0.0.28:10001,10.0.0.37:10001,10.0.0.172:10001",
-                                cluster_name="defaultCluster",
-                                username="admin",
-                                password="admin"
-                        )
-
-                        LOG.info('Connected to GridDB cluster.')
-                        break
-
-                except griddb.GSException:
-                        LOG.error("Error during connection to GridDB cluster. I'll try again...")
-                        time.sleep(2)
 
 
 @app.route('/', methods=['GET'])
@@ -45,10 +25,25 @@ def home():
 def grafana_connection():
         return 'Success!', 200
 
+@app.route('/myEndpoint/search')
+def grafana_search():
+        return [], 200
+
+@app.route('/myEndpoint/query')
+def grafana_query():
+        return [], 200
 
 @app.route('/data/<homeid>')
 def get_data(homeid):
         try:
+                factory = griddb.StoreFactory.get_instance()
+                gridstore = factory.get_store(
+                        notification_member="10.0.0.28:10001,10.0.0.37:10001,10.0.0.172:10001",
+                        cluster_name="defaultCluster",
+                        username="admin",
+                        password="admin"
+                )
+
                 NumContainer = 2
                 LOG.info("[MultiGet S] Container = " + homeid)
 
@@ -80,5 +75,4 @@ def get_data(homeid):
 
         return 'Success!', 200
 
-connect_to_griddb()
 app.run(host='0.0.0.0', port=80)
