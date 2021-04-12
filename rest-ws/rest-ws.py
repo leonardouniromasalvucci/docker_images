@@ -45,12 +45,12 @@ def get_data(homeid):
                 )
 
                 NumContainer = 2
-                LOG.info("[MultiGet S] Container = " + homeid)
+                LOG.info("[MultiGet S] HOME ID = " + homeid)
 
                 listCon = []
                 listQuery = []
                 for i in range(1, NumContainer+1):
-                        container = gridstore.get_container("home-"+homeid+"_device-" + str(i))
+                        container = gridstore.get_container("home-"+homeid+"_device-"+str(i))
                         if container == None:
                                 LOG.info("container: None")
                         listCon.append(container)
@@ -58,6 +58,7 @@ def get_data(homeid):
                         if query == None:
                                 LOG.info("query: None")
                         listQuery.append(query)
+                        LOG.info("home-"+homeid+"_device-" + str(i))
                 gridstore.fetch_all(listQuery)
                 for q in listQuery:
                         rs = q.get_row_set()
