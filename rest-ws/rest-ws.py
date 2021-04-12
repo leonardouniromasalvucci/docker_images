@@ -41,12 +41,16 @@ def connect_to_griddb():
 def home():
     return "<h1>GridDB Client</h1><p>GridDB client to extract data from cluster.</p>"
 
+@app.route('/myEndpoint')
+def grafana_connection():
+        return 'Success!', 200
+
 
 @app.route('/data/<homeid>')
 def get_data(homeid):
         try:
                 NumContainer = 2
-                LOG.info("[MultiGet S]")
+                LOG.info("[MultiGet S] Container = " + homeid)
 
                 listCon = []
                 listQuery = []
@@ -73,6 +77,8 @@ def get_data(homeid):
                         LOG.err("[", i, "]")
                         LOG.err(e.get_error_code(i))
                         LOG.err(e.get_message(i))
+
+        return 'Success!', 200
 
 connect_to_griddb()
 app.run(host='0.0.0.0', port=80)
