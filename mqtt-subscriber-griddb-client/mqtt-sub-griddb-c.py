@@ -9,11 +9,11 @@ logging.basicConfig(level=logging.DEBUG)
 LOG = logging.getLogger(__name__)
 
 try:
-    machine_ip = os.environ['RUBBITMQ_HOST_IP']
+    machine_ip = os.environ['HOST_IP']
 except:
     LOG.error('Error during the processing of the HOST IP')
 
-topic = '$share/group1/0001/'
+topic = '$share/group1/#'
 col = None
 factory = None
 update = True
@@ -29,13 +29,23 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, message):
         LOG.info('MQTT: ' + str(message.payload.decode("utf-8")))
         y = json.loads(str(message.payload.decode("utf-8")))
+        sub_topics = str(message.topic).split('/')[1:-1]
         while True:
                 LOG.info('Try insertion of message: ' + str(message.payload.decode("utf-8")) + ' in GridDB...')
                 try:
-                        now = datetime.datetime.utcnow()
-                        res = col.put([now, datetime.utcfromtimestamp(y["timestamp"]), str(y["device_id"]), str(y["value"])])
+                        conInfo = griddb.ContainerInfo(sub_topics[0]+"_"+sub_topics[1],
+                                [["timestamp", griddb.Type.TIMESTAMP],
+                                #["timestamp2", griddb.Type.TIMESTAMP],
+                                ["sensorId", griddb.Type.STRING],
+                                ["sensorValue", griddb.Type.STRING]],
+                                griddb.ContainerType.TIME_SERIES, True)
+
+                        col = gridstore.put_container(conInfo)
+                        col.set_auto_commit(False)
+                        #now = datetime.datetime.utcnow()
+                        col.put([datetime.utcfromtimestamp(y["timestamp"]), str(y["device_id"]), str(y["value"])])
+                        res = col.commit()
                         LOG.info("GridDB reply: " + str(res) + '.')
-                        #datetime.utcfromtimestamp(y["timestamp"])
                         break
                 except:
                         LOG.error("Error during update GridDB cluster.")
@@ -51,14 +61,6 @@ while True:
                 username="admin",
                 password="admin")
 
-                conInfo = griddb.ContainerInfo("KalpaSensorsDByeslast",
-                                [["timestamp", griddb.Type.TIMESTAMP],
-                                ["timestamp2", griddb.Type.TIMESTAMP],
-                                ["sensorId", griddb.Type.STRING],
-                                ["sensorValue", griddb.Type.STRING]],
-                                griddb.ContainerType.TIME_SERIES, True)
-
-                col = gridstore.put_container(conInfo)
                 LOG.info('Connected to GridDB cluster.')
                 break
 
