@@ -12,10 +12,39 @@ col = None
 factory = None
 update = True
 
+def append_to_list(list, label, value):
+    if (not any(label in d['target'] for d in list)):
+        list.append({"target": label, "datapoints": [value]})
+    else:
+        for i in list:
+            if(i['target'] == label):
+                i['datapoints'].append(value)
+    return list
 
-@app.route('/data/<homeid>')
-def get_data(homeid):
+def to_timestamp(date):
+    time_tuple = date.timetuple()
+    timestamp = time.mktime(time_tuple)
+    return timestamp
+
+app = flask.Flask(__name__)
+app.config["DEBUG"] = True
+
+@app.route('/', methods=['GET'])
+def home():
+    return "<h1>GridDB Client for Grafana</h1><p>GridDB client to extract data from cluster.</p>"
+
+@app.route('/<homeid>')
+def grafana_connection(homeid):
+        return 'Success to connect to ENDPOINT '+ str(homeid) +'!', 200
+
+@app.route('/<homeid>/search',methods = ['POST', 'GET'])
+def grafana_search(homeid):
+        return jsonify([]), 200
+
+@app.route('/<homeid>/query',methods = ['POST', 'GET'])
+def grafana_query(homeid):
         try:
+
                 factory = griddb.StoreFactory.get_instance()
                 gridstore = factory.get_store(
                         notification_member="10.0.0.28:10001,10.0.0.37:10001,10.0.0.172:10001",
@@ -27,21 +56,9 @@ def get_data(homeid):
                 LOG.info("[MultiGet S] HOME ID = " + homeid)
 
                 results = []
+
                 listCon = []
                 listQuery = []
-                #NumContainer = 2
-                '''for i in range(1, NumContainer+1):
-                        container = gridstore.get_container("home-"+homeid+"_device-"+str(i))
-                        if container == None:
-                                LOG.info("container: None")
-                        listCon.append(container)
-                        query = container.query("select * where timestamp > TIMESTAMPADD(MINUTE, NOW(), -2)")
-                        if query == None:
-                                LOG.info("query: None")
-                        listQuery.append(query)
-                        LOG.info("home-"+homeid+"_device-" + str(i))
-                gridstore.fetch_all(listQuery)'''
-
                 i=0
                 while True:
                         try:
@@ -63,7 +80,7 @@ def get_data(homeid):
                         rs = q.get_row_set()
                         while rs.has_next():
                                 row = rs.next()
-                                results.append(row)
+                                results = append_to_list(results, row[1], [row[2], to_timestamp(row[0])])
                                 LOG.info(row)
 
                 LOG.info("[MultiGet E]")
@@ -74,13 +91,6 @@ def get_data(homeid):
                         LOG.err(e.get_error_code(i))
                         LOG.err(e.get_message(i))
 
-        html = '<table style="width:30%"><tr><th>Timestamp</th><th>Label</th><th>Value</th></tr>'
-        for i in results:
-                html += '<tr>'
-                for k in i:
-                        html += '<td>'+ str(k) +'</td>'        
-                html += '</tr>'
-        html += '</table>'
-        return html, 200
+        return jsonify(results), 200
 
-app.run(host='0.0.0.0', port=80)
+app.run(host='0.0.0.0', port=8080)
