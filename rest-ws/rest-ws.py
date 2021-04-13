@@ -2,7 +2,7 @@
 
 import griddb_python as griddb
 import flask, logging, os, sys, datetime, json, time, socket, subprocess, threading
-from flask import request
+from flask import request, jsonify
 
 logging.basicConfig(level=logging.INFO)
 LOG = logging.getLogger(__name__)
@@ -39,7 +39,7 @@ def grafana_connection(homeid):
 
 @app.route('/<homeid>/search')
 def grafana_search(homeid):
-        return [], 200
+        return jsonify([]), 200
 
 @app.route('/<homeid>/query')
 def grafana_query(homeid):
@@ -91,7 +91,7 @@ def grafana_query(homeid):
                         LOG.err(e.get_error_code(i))
                         LOG.err(e.get_message(i))
 
-        return results, 200
+        return jsonify(results), 200
 
 @app.route('/data/<homeid>')
 def get_data(homeid):
