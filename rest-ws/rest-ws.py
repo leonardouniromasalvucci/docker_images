@@ -34,11 +34,11 @@ def home():
     return "<h1>GridDB Client</h1><p>GridDB client to extract data from cluster.</p>"
 
 @app.route('/<homeid>')
-def grafana_connection():
-        return 'Success!', 200
+def grafana_connection(homeid):
+        return 'Success to connect to ENDPOINT '+ str(homeid) +'!', 200
 
 @app.route('/<homeid>/search')
-def grafana_search():
+def grafana_search(homeid):
         return [], 200
 
 @app.route('/<homeid>/query')
@@ -158,7 +158,7 @@ def get_data(homeid):
         for i in results:
                 html += '<tr>'
                 for k in i:
-                        html += '<td>'+ k +'</td>'        
+                        html += '<td>'+ str(k) +'</td>'        
                 html += '</tr>'
         html += '</table>'
         return html, 200
