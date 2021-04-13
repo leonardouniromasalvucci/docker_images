@@ -5,6 +5,11 @@ import griddb_python as griddb
 import pika, logging, os, sys, datetime, json, time, socket, subprocess, threading
 from datetime import datetime
 
+from paho.mqtt.properties import Properties
+from paho.mqtt.packettypes import PacketTypes 
+properties=Properties(PacketTypes.CONNECT)
+properties.SessionExpiryInterval=1273
+
 logging.basicConfig(level=logging.DEBUG)
 LOG = logging.getLogger(__name__)
 
@@ -13,6 +18,7 @@ try:
 except:
     LOG.error('Error during the processing of the HOST IP')
 
+broker = "InternalKalpaELB-c6dcbc9047674e10.elb.eu-west-1.amazonaws.com"
 topic = '$share/group1/#'
 col = None
 factory = None
@@ -70,11 +76,11 @@ while True:
 while True:
         LOG.info('Trying to connect to MQTT Broker cluster...')
         try:
-                client = mqtt.Client(client_id = machine_ip, clean_session = False)
+                client = mqtt.Client(client_id = machine_ip,  protocol = 5)
                 client.enable_logger(LOG)
                 client.on_connect = on_connect
                 client.on_message = on_message
-                client.connect('InternalKalpaELB-c6dcbc9047674e10.elb.eu-west-1.amazonaws.com', 1883, 6)
+                client.connect(host = broker, port = 1883, keepalive = 1200, clean_start = False, properties = properties)
                 client.loop_forever()
                 LOG.info('Connected to MQTT Brokers cluster.')
                 break
