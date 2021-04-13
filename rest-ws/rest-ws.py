@@ -31,6 +31,11 @@ def to_timestamp(date):
     timestamp = time.mktime(time_tuple)
     return timestamp
 
+@app.route('/reset', methods=['GET'])
+def reset():
+        global messages_sent_by_clients
+        messages_sent_by_clients = 0
+
 @app.route('/<homeid>/monitoring', methods=['GET'])
 def monitoring(homeid):
         global messages_sent_by_clients
@@ -84,7 +89,7 @@ def monitoring(homeid):
 
                         
         html = '<table style="width:30%"><tr><th>Sent</th><th>Stored</th></tr>'
-        html += '<tr><td>'+messages_sent_by_clients+'</td><td>'+len(results)+'</td></tr>'
+        html += '<tr><td>'+str(messages_sent_by_clients)+'</td><td>'+str(len(results))+'</td></tr>'
         html += '</table>'
         return html, 200
 
