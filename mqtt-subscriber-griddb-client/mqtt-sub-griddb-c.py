@@ -28,7 +28,7 @@ connected = False
 def on_disconnect(client, userdata, rc):
         sys.exit()
 
-def on_connect(client, userdata, flags, rc):
+def on_connect(client, userdata, flags, reasonCode, properties=None):
         client.subscribe(topic, qos=2)
         LOG.info('MQTT subscriber ' + str(machine_ip) + ' is ready.')
 
