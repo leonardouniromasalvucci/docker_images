@@ -27,17 +27,9 @@
 #  environment:
 #        - HOST_IP=${HOSTNAME}
 
-#rest-ws:
-#  build: rest-ws
-#  restart: always
-#  ports:
-#   - 80:80
-#  command: python3 rest-ws.py
-
-#grafana-ws:
-#  build: grafana-ws
-#  restart: always
-#  ports:
-#   - 8080:8080
-#  command: python3 grafana-ws.py
-
+rest-ws:
+  build: rest-ws
+  restart: always
+  ports:
+   - 80:80
+  command: python3 rest-ws.py
