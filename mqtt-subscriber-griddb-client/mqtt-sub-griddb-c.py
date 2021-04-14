@@ -77,6 +77,7 @@ while True:
         LOG.info('Trying to connect to MQTT Broker cluster...')
         try:
                 client = mqtt.Client(client_id = machine_ip,  protocol = 5)
+                client.username_pw_set("dev-01", "dev-01234")
                 client.enable_logger(LOG)
                 client.on_connect = on_connect
                 client.on_message = on_message

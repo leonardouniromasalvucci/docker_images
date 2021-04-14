@@ -35,6 +35,7 @@ def to_timestamp(date):
 def reset():
         global messages_sent_by_clients
         messages_sent_by_clients = 0
+        return 'Success!', 200
 
 @app.route('/<homeid>/monitoring', methods=['GET'])
 def monitoring(homeid):
