@@ -222,7 +222,7 @@ def get_data(homeid, time):
                         rs = q.get_row_set()
                         while rs.has_next():
                                 row = rs.next()
-                                results = append_to_list(results, row[1], [row[2], to_timestamp(row[0])])
+                                results.append(row)
                                 LOG.info(row)
 
                 LOG.info("[MultiGet E]")
