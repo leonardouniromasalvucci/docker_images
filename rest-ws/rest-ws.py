@@ -239,11 +239,12 @@ def get_data(homeid, time):
                 for k in i:
                         html += '<td>'+ str(k) +'</td>'        
                 html += '</tr>'
-        html += '</table>
+        html += '</table>'
+
         return html, 200
 
 @app.route('/data/json/<homeid>/<time>')
-def get_data(homeid, time):
+def get_data_json(homeid, time):
         try:
                 factory = griddb.StoreFactory.get_instance()
                 gridstore = factory.get_store(
