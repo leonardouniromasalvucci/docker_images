@@ -142,7 +142,7 @@ def grafana_query(homeid):
                                 if container == None:
                                         LOG.info("container: None")
                                 listCon.append(container)
-                                query = container.query("select * where timestamp > TIMESTAMP(" + y['range']['from'] + ") AND timestamp < TIMESTAMP(" + y['range']['to'] + ")")
+                                query = container.query("select * where timestamp > TIMESTAMP(" + str(y['range']['from']) + ") AND timestamp < TIMESTAMP(" + str(y['range']['to']) + ")")
                                 if query == None:
                                         LOG.info("query: None")
                                 listQuery.append(query)
