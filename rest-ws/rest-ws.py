@@ -142,7 +142,7 @@ def grafana_query(homeid):
                                 if container == None:
                                         LOG.info("container: None")
                                 listCon.append(container)
-                                query = container.query("select * where timestamp > TIMESTAMP(" + str(y['range']['from']) + ") AND timestamp < TIMESTAMP(" + str(y['range']['to']) + ")")
+                                query = container.query("select * where timestamp > TIMESTAMP('" + y['range']['from'] + "') AND timestamp < TIMESTAMP('" + y['range']['to'] + "')")
                                 if query == None:
                                         LOG.info("query: None")
                                 listQuery.append(query)
@@ -162,10 +162,7 @@ def grafana_query(homeid):
                 LOG.info("[MultiGet E]")
 
         except griddb.GSException as e:
-                for i in range(e.get_error_stack_size()):
-                        LOG.err("[", i, "]")
-                        LOG.err(e.get_error_code(i))
-                        LOG.err(e.get_message(i))
+                LOG.info(e.get_message(i))
 
         return jsonify(results), 200
 
