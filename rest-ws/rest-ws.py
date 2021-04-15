@@ -115,6 +115,8 @@ def grafana_search(homeid):
 
 @app.route('/<homeid>/query',methods = ['POST', 'GET'])
 def grafana_query(homeid):
+        data = request.json
+        LOG.debug(jsonify(data))
         try:
                 factory = griddb.StoreFactory.get_instance()
                 gridstore = factory.get_store(
@@ -165,8 +167,8 @@ def grafana_query(homeid):
         return jsonify(results), 200
 
 
-@app.route('/data/<homeid>')
-def get_data(homeid):
+@app.route('/data/<homeid>/<time>')
+def get_data(homeid, time):
         try:
                 factory = griddb.StoreFactory.get_instance()
                 gridstore = factory.get_store(
@@ -181,6 +183,7 @@ def get_data(homeid):
                 results = []
                 listCon = []
                 listQuery = []
+                
                 #NumContainer = 2
                 '''for i in range(1, NumContainer+1):
                         container = gridstore.get_container("home-"+homeid+"_device-"+str(i))
@@ -201,7 +204,11 @@ def get_data(homeid):
                                 if container == None:
                                         LOG.info("container: None")
                                 listCon.append(container)
-                                query = container.query("select * where timestamp > TIMESTAMPADD(MINUTE, NOW(), -30)")
+                                query = None
+                                if time == "all":
+                                        query = container.query("select *")
+                                else:
+                                        query = container.query("select * where timestamp > TIMESTAMPADD(MINUTE, NOW(), -60)")
                                 if query == None:
                                         LOG.info("query: None")
                                 listQuery.append(query)
