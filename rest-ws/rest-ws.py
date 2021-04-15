@@ -117,6 +117,9 @@ def grafana_search(homeid):
 def grafana_query(homeid):
         data = request.get_data().decode("utf-8")
         LOG.info(data)
+        y = json.loads(data)
+        LOG.info(y['range']['from'])
+        LOG.info(y['range']['to'])
         try:
                 factory = griddb.StoreFactory.get_instance()
                 gridstore = factory.get_store(
@@ -139,7 +142,7 @@ def grafana_query(homeid):
                                 if container == None:
                                         LOG.info("container: None")
                                 listCon.append(container)
-                                query = container.query("select * where timestamp > TIMESTAMPADD(MINUTE, NOW(), -30)")
+                                query = container.query("select * where timestamp > TIMESTAMP(" + y['range']['from'] + ") AND timestamp < TIMESTAMP(" + y['range']['to'] + ")")
                                 if query == None:
                                         LOG.info("query: None")
                                 listQuery.append(query)
