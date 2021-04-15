@@ -115,8 +115,8 @@ def grafana_search(homeid):
 
 @app.route('/<homeid>/query',methods = ['POST', 'GET'])
 def grafana_query(homeid):
-        data = request.json
-        LOG.debug(jsonify(data))
+        data = request.get_data().decode("utf-8")
+        LOG.info(data)
         try:
                 factory = griddb.StoreFactory.get_instance()
                 gridstore = factory.get_store(
