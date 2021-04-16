@@ -15,8 +15,6 @@ update = True
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
-messages_sent_by_clients = 0
-
 def append_to_list(list, label, value):
     if (not any(label in d['target'] for d in list)):
         list.append({"target": label, "datapoints": [value]})
@@ -47,14 +45,19 @@ def grafana_search(homeid):
 @app.route('/<homeid>/query',methods = ['POST', 'GET'])
 def grafana_query(homeid):
         LOG.info(request.headers)
-        head_usr = request.headers['X-User']
-        LOG.info(head_usr)
-        head_psw = request.headers['X-Password']
-        LOG.info(head_psw)
+        data = request.get_data().decode("utf-8")
+        LOG.info(data)
+        #head_usr = request.headers['X-User']
+        #LOG.info(head_usr)
+        #head_psw = request.headers['X-Password']
+        #LOG.info(head_psw)
 
-        if(head_usr == "grafana-test" and head_psw == "grafana-1234"):
-                data = request.get_data().decode("utf-8")
-                LOG.info(data)
+        r_body = None
+        r_code = None
+
+        if(request.headers['X-User'] == "grafana-test" and request.headers['X-Password'] == "grafana-1234"):
+                #data = request.get_data().decode("utf-8")
+                #LOG.info(data)
                 y = json.loads(data)
                 LOG.info(y['range']['from'])
                 LOG.info(y['range']['to'])
@@ -102,8 +105,12 @@ def grafana_query(homeid):
                 except griddb.GSException as e:
                         LOG.info(e.get_message(i))
 
-                return jsonify(results), 200
+                r_body = jsonify(results)
+                r_code = 200
         else:
-                return "Unauthorized request", 401
+                r_body = "Unauthorized request"
+                r_code = 401
+                
+        return r_body, r_code
 
 app.run(host='0.0.0.0', port=8080)

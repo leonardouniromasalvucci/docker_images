@@ -31,6 +31,7 @@ def to_timestamp(date):
     timestamp = time.mktime(time_tuple)
     return timestamp
 
+
 @app.route('/reset', methods=['GET'])
 def reset():
         global messages_sent_by_clients
@@ -103,68 +104,7 @@ def increment():
 
 @app.route('/', methods=['GET'])
 def home():
-    return "<h1>GridDB Client for Grafana</h1><p>GridDB client to extract data from cluster.</p>"
-
-@app.route('/<homeid>')
-def grafana_connection(homeid):
-        return 'Success to connect to ENDPOINT '+ str(homeid) +'!', 200
-
-@app.route('/<homeid>/search',methods = ['POST', 'GET'])
-def grafana_search(homeid):
-        return jsonify([]), 200
-
-@app.route('/<homeid>/query',methods = ['POST', 'GET'])
-def grafana_query(homeid):
-        data = request.get_data().decode("utf-8")
-        LOG.info(data)
-        y = json.loads(data)
-        LOG.info(y['range']['from'])
-        LOG.info(y['range']['to'])
-        try:
-                factory = griddb.StoreFactory.get_instance()
-                gridstore = factory.get_store(
-                        notification_member="10.0.0.28:10001,10.0.0.37:10001,10.0.0.172:10001",
-                        cluster_name="defaultCluster",
-                        username="admin",
-                        password="admin"
-                )
-
-                LOG.info("[MultiGet S] HOME ID = " + homeid)
-
-                results = []
-
-                listCon = []
-                listQuery = []
-                i=0
-                while True:
-                        try:
-                                container = gridstore.get_container("home-"+homeid+"_device-"+str(i))
-                                if container == None:
-                                        LOG.info("container: None")
-                                listCon.append(container)
-                                query = container.query("select * where timestamp > TIMESTAMP('" + y['range']['from'] + "') AND timestamp < TIMESTAMP('" + y['range']['to'] + "')")
-                                if query == None:
-                                        LOG.info("query: None")
-                                listQuery.append(query)
-                                LOG.info("home-"+homeid+"_device-" + str(i))
-                                i=i+1
-                        except:
-                                break
-                        
-                gridstore.fetch_all(listQuery)
-                for q in listQuery:
-                        rs = q.get_row_set()
-                        while rs.has_next():
-                                row = rs.next()
-                                results = append_to_list(results, row[1], [row[2], to_timestamp(row[0])])
-                                LOG.info(row)
-
-                LOG.info("[MultiGet E]")
-
-        except griddb.GSException as e:
-                LOG.info(e.get_message(i))
-
-        return jsonify(results), 200
+    return "<h1>GridDB Client for Grafana</h1><p>GridDB client to extract data from cluster.</p>", 200
 
 
 @app.route('/data/<homeid>/<time>')
@@ -205,10 +145,13 @@ def get_data(homeid, time):
                                         LOG.info("container: None")
                                 listCon.append(container)
                                 query = None
-                                if time == "all":
-                                        query = container.query("select *")
+                                if time == "hour":
+                                        query = container.query("select * where timestamp > TIMESTAMPADD(HOUR, NOW(), -1)")
+                                elif(time == "day"):
+                                        query = container.query("select * where timestamp > TIMESTAMPADD(HOUR, NOW(), -24)")
                                 else:
-                                        query = container.query("select * where timestamp > TIMESTAMPADD(MINUTE, NOW(), -60)")
+                                        query = container.query("select *")
+
                                 if query == None:
                                         LOG.info("query: None")
                                 listQuery.append(query)
@@ -245,71 +188,91 @@ def get_data(homeid, time):
 
 @app.route('/data/json/<homeid>/<time>')
 def get_data_json(homeid, time):
-        try:
-                factory = griddb.StoreFactory.get_instance()
-                gridstore = factory.get_store(
-                        notification_member="10.0.0.28:10001,10.0.0.37:10001,10.0.0.172:10001",
-                        cluster_name="defaultCluster",
-                        username="admin",
-                        password="admin"
-                )
+        LOG.info(request.headers)
+        data = request.get_data().decode("utf-8")
+        LOG.info(data)
+        #head_usr = request.headers['X-User']
+        #LOG.info(head_usr)
+        #head_psw = request.headers['X-Password']
+        #LOG.info(head_psw)
 
-                LOG.info("[MultiGet S] HOME ID = " + homeid)
+        r_body = None
+        r_code = None
 
-                results = []
-                listCon = []
-                listQuery = []
-                
-                #NumContainer = 2
-                '''for i in range(1, NumContainer+1):
-                        container = gridstore.get_container("home-"+homeid+"_device-"+str(i))
-                        if container == None:
-                                LOG.info("container: None")
-                        listCon.append(container)
-                        query = container.query("select * where timestamp > TIMESTAMPADD(MINUTE, NOW(), -2)")
-                        if query == None:
-                                LOG.info("query: None")
-                        listQuery.append(query)
-                        LOG.info("home-"+homeid+"_device-" + str(i))
-                gridstore.fetch_all(listQuery)'''
+        if(request.headers['X-User'] == "grafana-test" and request.headers['X-Password'] == "grafana-1234"):
+                try:
+                        factory = griddb.StoreFactory.get_instance()
+                        gridstore = factory.get_store(
+                                notification_member="10.0.0.28:10001,10.0.0.37:10001,10.0.0.172:10001",
+                                cluster_name="defaultCluster",
+                                username="admin",
+                                password="admin"
+                        )
 
-                i=0
-                while True:
-                        try:
+                        LOG.info("[MultiGet S] HOME ID = " + homeid)
+
+                        results = []
+                        listCon = []
+                        listQuery = []
+                        
+                        #NumContainer = 2
+                        '''for i in range(1, NumContainer+1):
                                 container = gridstore.get_container("home-"+homeid+"_device-"+str(i))
                                 if container == None:
                                         LOG.info("container: None")
                                 listCon.append(container)
-                                query = None
-                                if time == "all":
-                                        query = container.query("select *")
-                                else:
-                                        query = container.query("select * where timestamp > TIMESTAMPADD(MINUTE, NOW(), -60)")
+                                query = container.query("select * where timestamp > TIMESTAMPADD(MINUTE, NOW(), -2)")
                                 if query == None:
                                         LOG.info("query: None")
                                 listQuery.append(query)
                                 LOG.info("home-"+homeid+"_device-" + str(i))
-                                i=i+1
-                        except:
-                                break
-                        
-                gridstore.fetch_all(listQuery)
-                for q in listQuery:
-                        rs = q.get_row_set()
-                        while rs.has_next():
-                                row = rs.next()
-                                results = append_to_list(results, row[1], [row[2], to_timestamp(row[0])])
-                                LOG.info(row)
+                        gridstore.fetch_all(listQuery)'''
 
-                LOG.info("[MultiGet E]")
+                        i=0
+                        while True:
+                                try:
+                                        container = gridstore.get_container("home-"+homeid+"_device-"+str(i))
+                                        if container == None:
+                                                LOG.info("container: None")
+                                        listCon.append(container)
+                                        query = None
+                                        if time == "hour":
+                                                query = container.query("select * where timestamp > TIMESTAMPADD(HOUR, NOW(), -1)")
+                                        elif(time == "day"):
+                                                query = container.query("select * where timestamp > TIMESTAMPADD(HOUR, NOW(), -24)")
+                                        else:
+                                                query = container.query("select *")
+                                        if query == None:
+                                                LOG.info("query: None")
+                                        listQuery.append(query)
+                                        LOG.info("home-"+homeid+"_device-" + str(i))
+                                        i=i+1
+                                except:
+                                        break
+                                
+                        gridstore.fetch_all(listQuery)
+                        for q in listQuery:
+                                rs = q.get_row_set()
+                                while rs.has_next():
+                                        row = rs.next()
+                                        results = append_to_list(results, row[1], [row[2], to_timestamp(row[0])])
+                                        LOG.info(row)
 
-        except griddb.GSException as e:
-                for i in range(e.get_error_stack_size()):
-                        LOG.err("[", i, "]")
-                        LOG.err(e.get_error_code(i))
-                        LOG.err(e.get_message(i))
+                        LOG.info("[MultiGet E]")
 
-        return jsonify(results), 200
+                except griddb.GSException as e:
+                        for i in range(e.get_error_stack_size()):
+                                LOG.err("[", i, "]")
+                                LOG.err(e.get_error_code(i))
+                                LOG.err(e.get_message(i))
+
+                r_body = jsonify(results)
+                r_code = 200
+        else:
+                r_body = "Unauthorized request"
+                r_code = 400
+        
+        return r_body, r_code
 
 
 app.run(host='0.0.0.0', port=80)
