@@ -38,5 +38,15 @@ grafana-ws:
   build: grafana-ws
   restart: always
   ports:
-   - 8080:8080
+   - 8081:8081
   command: python3 grafana-ws.py
+
+cadvisor:
+  image: google/cadvisor:latest
+  ports:
+   - 8080:8080
+  volumes:
+    - /:/rootfs:ro
+    - /var/run:/var/run:rw
+    - /sys:/sys:ro
+    - /var/lib/docker/:/var/lib/docker:ro
