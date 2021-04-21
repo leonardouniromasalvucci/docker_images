@@ -81,7 +81,7 @@ while True:
                 client.enable_logger(LOG)
                 client.on_connect = on_connect
                 client.on_message = on_message
-                client.connect(host = broker, port = 1883, keepalive = 1200, clean_start = False, properties = properties)
+                client.connect(host = broker, port = 1883, keepalive = 60, clean_start = False, properties = properties)
                 client.loop_forever()
                 LOG.info('Connected to MQTT Brokers cluster.')
                 break
