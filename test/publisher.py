@@ -66,14 +66,17 @@ class Device(Thread):
 		client.username_pw_set("dev-01", "dev-01234")
 		client.loop_start()
 
-		r = client.connect(host = broker, port = 1883, keepalive = 120, clean_start = True, properties = None)
+		
 
 		while True:
 			try:
+				r = client.connect(host = broker, port = 1883, keepalive = 120, clean_start = True, properties = None)
 				dt = datetime.datetime.now() 
 				utc_time = dt.replace(tzinfo = timezone.utc)
 				m = json.dumps(Message(utc_time.timestamp(), "lightness", str(round(random.uniform(0.5, 1.9),3))).__dict__)
 				client.publish("/7/0/", m, int(qos))
+				time.sleep(4)
+				client.disconnect()
 				time.sleep(int(interval_message_sent))
 			except:
 				print("ERR")
