@@ -75,7 +75,7 @@ class Device(Thread):
 				utc_time = dt.replace(tzinfo = timezone.utc)
 				m = json.dumps(Message(utc_time.timestamp(), "lightness", str(round(random.uniform(0.5, 1.9),3))).__dict__)
 				client.publish("/7/0/", m, int(qos))
-				time.sleep(2)
+				time.sleep(1)
 				client.disconnect()
 				time.sleep(int(interval_message_sent))
 			except:
