@@ -3,9 +3,7 @@ import time, sys, os
 from threading import Thread
 import time, random, json, datetime, logging
 from datetime import timezone
-import keyboard
-import ssl
-import argparse, requests
+import argparse
 
 parser = argparse.ArgumentParser(description='This is a script to simulate several IoT devices.')
 parser.add_argument('-n','--devices_number', help='Number of devices',required=False)
@@ -14,8 +12,6 @@ parser.add_argument('-ic','--interval_device_creation', help='Interval time of d
 parser.add_argument('-qos','--qos', help='Define the quality of service', required=False)
 parser.add_argument('-s','--enable_tls', help='Allow security communivcation through TLS', required=False)
 args = parser.parse_args()
-
-# https://aws.amazon.com/it/blogs/iot/how-to-implement-mqtt-with-tls-client-authentication-on-port-443-from-client-devices-python/
 
 devices_number = None
 interval_message_sent = None
@@ -65,7 +61,6 @@ class Message:
 	  self.timestamp = timestamp
 	  self.label = label
 	  self.value = value
-
 	
 class Device(Thread):
 
@@ -80,25 +75,23 @@ class Device(Thread):
 		client = mqtt.Client(client_id = str(self.id), protocol = 5)
 		client.on_connect = on_connect
 		client.enable_logger(LOG)
-		
-		client.tls_set(ca_certs = "C:/Users/leona/Desktop/myCA.pem", cert_reqs = ssl.CERT_REQUIRED, tls_version = ssl.PROTOCOL_TLSv1_2)
-		client.tls_insecure_set(False)
 		client.username_pw_set("dev-01", "dev-01234")
-		r = client.connect(host = broker, port = 443, keepalive = 120, clean_start = True, properties = None)
+		client.loop_start()
+
+		r = client.connect(host = broker, port = 1883, keepalive = 120, clean_start = True, properties = None)
 		print("Connected to broker ", broker, " with code ", r)
 
-		client.loop_start()
 		while True:
 			try:
 				dt = datetime.datetime.now() 
 				utc_time = dt.replace(tzinfo = timezone.utc)
-				m = json.dumps(Message(utc_time.timestamp(), "humidity", str(round(random.uniform(0.5, 1.9),3))).__dict__)
-				resp = client.publish("/6/0/", m, int(qos))
-				#requests.get('https://restalb-1562068755.eu-west-1.elb.amazonaws.com/increment', verify=False)
+				m = json.dumps(Message(utc_time.timestamp(), "lightness", str(round(random.uniform(0.5, 1.9),3))).__dict__)
+				client.publish("/7/0/", m, int(qos))
 				print("Device "+ str(self.id) + " has published: " + m)
 				time.sleep(int(interval_message_sent))
 			except:
 				print("ERR")
+				time.sleep(int(interval_message_sent))
 
 for devices_id in range(1, int(devices_number) + 1):
 	try:
