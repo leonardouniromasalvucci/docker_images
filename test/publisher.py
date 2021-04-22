@@ -45,8 +45,6 @@ LOG = logging.getLogger(__name__)
 def on_connect(client, userdata, flags, rc, properties=None):
 	return rc
 
-l = []
-
 class Message:
   def __init__(self, timestamp, label, value):
 	  self.timestamp = timestamp
@@ -60,11 +58,9 @@ class Device(Thread):
 		self.id = id
 	
 	def run(self):
-		global l
 		#print ("Device " + str(self.id) + " is running...")
 		broker = "InternetKalpaELB-5c0c715d50ed9d71.elb.eu-west-1.amazonaws.com"
 		client = mqtt.Client(client_id = str(self.id), protocol = 5)
-		l.append(self.id)
 		client.on_connect = on_connect
 		#client.enable_logger(LOG)
 		client.username_pw_set("dev-01", "dev-01234")
@@ -86,6 +82,7 @@ class Device(Thread):
 for devices_id in range(1, int(devices_number) + 1):
 	try:
 		new_device = Device(devices_id)
+		print(str(devices_id) + " devices are running..")
 		new_device.daemon = True
 		new_device.start()
 		time.sleep(random.uniform(0, int(interval_device_creation)))
@@ -94,8 +91,6 @@ for devices_id in range(1, int(devices_number) + 1):
 		sys.exit(1)
 
 while True:
-	print(str(max(l)) + " devices are running..")
-	time.sleep(5)
 	try:
 		pass
 	except KeyboardInterrupt:
