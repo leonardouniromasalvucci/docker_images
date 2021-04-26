@@ -106,6 +106,7 @@ def grafana_query(homeid):
                         LOG.info(e.get_message(i))
 
                 r_body = jsonify(results)
+                LOG.info(r_body)
                 r_code = 200
         else:
                 r_body = "Unauthorized request"

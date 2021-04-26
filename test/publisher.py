@@ -20,7 +20,7 @@ enable_tls = None
 qos = None
 
 if(args.devices_number == None):
-	devices_number = 500
+	devices_number = 2500
 else:
 	devices_number = args.devices_number
 
@@ -30,7 +30,7 @@ else:
 	interval_message_sent = args.interval_message_sent
 
 if(args.interval_device_creation == None):
-	interval_device_creation = 5
+	interval_device_creation = 0.5
 else:
 	interval_device_creation = args.interval_device_creation
 
@@ -67,27 +67,29 @@ class Device(Thread):
 		client.loop_start()
 
 		try:
-			r = client.connect(host = broker, port = 1883, keepalive = 120, clean_start = True, properties = None)
+			client.connect(host = broker, port = 1883, keepalive = 120, clean_start = True, properties = None)
 			dt = datetime.datetime.now() 
 			utc_time = dt.replace(tzinfo = timezone.utc)
-			m = json.dumps(Message(utc_time.timestamp(), "lightness", str(round(random.uniform(0.5, 1.9),3))).__dict__)
-			client.publish("/7/0/", m, int(qos))
+			m = json.dumps(Message(utc_time.timestamp(), "temperature", str(round(random.uniform(0.5, 1.9),3))).__dict__)
+			client.publish("/43/0/", m, int(qos))
 			time.sleep(1)
 			client.disconnect()
 		except:
 			print("ERR")
 			time.sleep(int(interval_message_sent))
 
-for devices_id in range(1, int(devices_number) + 1):
-	try:
-		new_device = Device(devices_id)
-		print(str(devices_id) + " devices are running..")
-		new_device.daemon = True
-		new_device.start()
-		time.sleep(random.uniform(0, int(interval_device_creation)))
-	except:
-		print("Error during creation of device " + str(devices_id))
-		sys.exit(1)
+while True:
+	for devices_id in range(1, int(devices_number) + 1):
+		try:
+			new_device = Device(str(devices_id)+"_c")
+			print(str(devices_id)+"_c" + " devices are running..")
+			new_device.daemon = True
+			new_device.start()
+			time.sleep(random.uniform(0, float(interval_device_creation)))
+		except:
+			print("Error during creation of device " + str(devices_id))
+			sys.exit(1)
+	time.sleep(300)
 
 while True:
 	try:
