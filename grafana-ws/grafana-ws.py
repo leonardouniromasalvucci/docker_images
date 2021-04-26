@@ -26,7 +26,7 @@ def append_to_list(list, label, value):
 
 def to_timestamp(date):
     time_tuple = date.timetuple()
-    timestamp = time.mktime(time_tuple)
+    timestamp = int(time.mktime(time_tuple)*1000)
     return timestamp
 
 
