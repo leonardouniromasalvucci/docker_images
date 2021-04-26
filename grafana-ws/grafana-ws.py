@@ -105,8 +105,9 @@ def grafana_query(homeid):
                 except griddb.GSException as e:
                         LOG.info(e.get_message(i))
 
+                print(results)
                 r_body = jsonify(results)
-                LOG.info(r_body)
+                print(r_body)
                 r_code = 200
         else:
                 r_body = "Unauthorized request"
