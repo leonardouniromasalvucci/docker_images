@@ -26,22 +26,22 @@ enable_tls = None
 qos = None
 
 if(args.devices_number == None):
-	devices_number = 7500
+	devices_number = 3
 else:
 	devices_number = args.devices_number
 
 if(args.num_messages == None):
-	num_messages = 4
+	num_messages = 100
 else:
 	num_messages = args.num_messages
 
 if(args.interval_message_sent == None):
-	interval_message_sent = 900
+	interval_message_sent = 10
 else:
 	interval_message_sent = args.interval_message_sent
 
 if(args.interval_device_creation == None):
-	interval_device_creation = 0.5
+	interval_device_creation = 1
 else:
 	interval_device_creation = args.interval_device_creation
 
@@ -90,8 +90,8 @@ class Device(Thread):
 				try:
 					dt = datetime.datetime.now() 
 					utc_time = dt.replace(tzinfo = timezone.utc)
-					m = json.dumps(Message(utc_time.timestamp(), "humidity", str(round(random.uniform(0.5, 1.9),3))).__dict__)
-					client.publish("/67/"+str(self.id)+"/", m, int(qos))
+					m = json.dumps(Message(utc_time.timestamp(), sensor_type[self.id], str(round(random.uniform(0.5, 1.9),3))).__dict__)
+					client.publish("/70/"+str(self.id)+"/", m, int(qos))
 					print("Device "+ str(self.id) + " has published: " + m)
 					time.sleep(float(interval_message_sent))
 					i=i+1
