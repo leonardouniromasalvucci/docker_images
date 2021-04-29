@@ -89,10 +89,13 @@ def monitoring(homeid):
                         LOG.err(e.get_error_code(i))
                         LOG.err(e.get_message(i))
 
-                        
-        html = '<table style="width:30%"><tr><th>Sent</th><th>Stored</th></tr>'
-        html += '<tr><td>'+str(messages_sent_by_clients)+'</td><td>'+str(len(results))+'</td></tr>'
+
+        html = '<html> <head> <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> <title>Monitoring</title> <meta name="viewport" content="width=device-width, initial-scale=1">  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"> </head>'
+        html += '<body><div class="col-md-6 col-md-offset-3"> <h3>Message monitoring</h3> <table class="table table-striped table-bordered" style="margin-top:40px;">' #<table align="center" style="margin-top:50px;width:20%;border-collapse: collapse;border: 1px solid black;">
+        html += '<tr><th style="text-align:center;">Published</th><th style="text-align:center;">Stored</th><th style="text-align:center;color:#d9534f">Lost</th></tr>'
+        html += '<tr style="border: 1px solid black;"><td style="text-align:center;margin-top:10px;">'+str(messages_sent_by_clients)+'</td><td style="text-align:center;margin-top:10px;">'+str(len(results))+'</td><td style="text-align:center;margin-top:10px;color:#d9534f"">'+str(messages_sent_by_clients-len(results))+'</td></tr>'
         html += '</table>'
+        html += '</body></html>'
         return html, 200
 
 
