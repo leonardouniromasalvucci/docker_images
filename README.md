@@ -1,5 +1,7 @@
 ## Prerequisites
 
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Rotating_earth_%28large%29.gif/260px-Rotating_earth_%28large%29.gif)
+
 - Install [Docker](https://docs.docker.com/installation/)
 1) sudo yum update -y
 2) sudo amazon-linux-extras install docker
